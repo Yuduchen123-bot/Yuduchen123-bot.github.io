@@ -72,6 +72,17 @@
     
     
     <entry>
+      <title>説説</title>
+      <link href="/shuoshuo/index.html"/>
+      <url>/shuoshuo/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>友情链接</title>
       <link href="/link/index.html"/>
       <url>/link/index.html</url>
@@ -86,17 +97,6 @@
       <title>文章分类</title>
       <link href="/tags/index.html"/>
       <url>/tags/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>説説</title>
-      <link href="/shuoshuo/index.html"/>
-      <url>/shuoshuo/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
