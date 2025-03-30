@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>MySql</title>
+      <link href="/posts/16097.html"/>
+      <url>/posts/16097.html</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-MySql"><a href="#1-MySql" class="headerlink" title="1.MySql"></a>1.MySql</h1><h2 id="1-1数据库的三范式是什么"><a href="#1-1数据库的三范式是什么" class="headerlink" title="1.1数据库的三范式是什么"></a>1.1<strong>数据库的三范式是什么</strong></h2><p>第一范式（1NF）：原子性（存储的数据应该具有“不可再分性”）</p><p>第二范式（2NF）：唯一性 (消除非主键部分依赖联合主键中的部分字段)</p><p>第三范式（3NF）：独立性，消除传递依赖(非主键值不依赖于另一个非主键值)</p><p>且三大范式是一级一级依赖的，第二范式建立在第一范式上，第三范式建立第一第二范式上。</p><h2 id="1-2MySql常用引擎：MYISAM、Innodb"><a href="#1-2MySql常用引擎：MYISAM、Innodb" class="headerlink" title="1.2MySql常用引擎：MYISAM、Innodb"></a>1.2MySql常用引擎：MYISAM、Innodb</h2><p>MYISAM：全表锁，拥有较高的执行速度，不支持事务，不支持外键，并发性能差，占用空间相对</p><p>较小，对事务完整性没有要求，以select、insert为主的应用基本上可以使用这引擎</p><p>Innodb:行级锁，提供了具有提交、回滚和崩溃回复能力的事务安全，支持自动增长列，支持外键</p><p>约束，并发能力强，占用空间是MYISAM的2.5倍，处理效率相对会差一些</p><h2 id="1-3InnoDB与MyISAM的区别"><a href="#1-3InnoDB与MyISAM的区别" class="headerlink" title="1.3InnoDB与MyISAM的区别"></a>1.3InnoDB与MyISAM的区别</h2><ol><li>InnoDB支持事务，MyISAM不支持，对于InnoDB每一条SQL语言都默认封装成事务，自动提交，</li></ol><p>这样会影响速度，所以最好把多条SQL语言放在begin和commit之间，组成一个事务；</p><ol start="2"><li>InnoDB支持外键，而MyISAM不支持。对一个包含外键的InnoDB表转为MYISAM会失败；</li><li>InnoDB是聚集索引，数据文件是和索引绑在一起的，必须要有主键，通过主键索引效率很高。但</li></ol><p>是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，</p><p>因为主键太大，其他索引也都会很大。而MyISAM是非聚集索引，数据文件是分离的，索引保存的</p><p>是数据文件的指针。主键索引和辅助索引是独立的。</p><ol start="4"><li>InnoDB不保存表的具体行数，执行select count(*) from table时需要全表扫描。而MyISAM用一</li></ol><p>个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快；</p><ol start="5"><li>Innodb不支持全文索引，而MyISAM支持全文索引，查询效率上MyISAM要高；</li></ol><h2 id="1-4如何选择引擎？"><a href="#1-4如何选择引擎？" class="headerlink" title="1.4如何选择引擎？"></a>1.4<strong>如何选择引擎？</strong></h2><p>如果没有特别的需求，使用默认的 Innodb 即可。</p><p>MyISAM：以读写插入为主的应用程序，比如博客系统、新闻门户网站。</p><p>Innodb：更新（删除）操作频率也高，或者要保证数据的完整性；并发量高，支持事务和外键。</p><h2 id="1-5数据库的事务"><a href="#1-5数据库的事务" class="headerlink" title="1.5数据库的事务"></a>1.5<strong>数据库的事务</strong></h2><p><strong>什么是事务？：</strong> 多条sql语句，要么全部成功，要么全部失败</p><p><em>数据库事务特性：原子性(Atomic)、一致性</em>(Consistency)、隔离性(Isolation)、持久性(Durabiliy),</p><p>简称ACID</p><p>原子性: 指的是一个事务中的操作要么全部成功，要么全部失败。</p><p>一致性: 指的是数据库总是从一个一致性的状态转换到另外一个一致性的状态。即数据不会被破坏。如A</p><p>转账100元给B，不管操作是否成功，A和B的账户总额是不变的。</p><p>隔离性:在并发数据操作时，不同的事务拥有各自的数据空间，它们的操作不会对彼此产生干扰</p><p>持久性: 指的是一旦事务提交，所做的修改就会永久保存到数据库中，</p><h2 id="1-6索引"><a href="#1-6索引" class="headerlink" title="1.6索引"></a>1.6索引</h2><p>索引用来快速地寻找那些具有特定值的记录。如果没有索引，一般来说执行查询时遍历整张表。</p><p><strong>索引的原理:就是把无序的数据变成有序的查询,以空间换时间(通过创建额外的数据结构来使得对数据的访问更加快速和高效)</strong><br>1.把创建了索引的列的内容进行排序<br>2.对排序结果生成倒排表<br>3.在倒排表内容上拼上数据地址链<br>4.在查询的时候，先拿到倒排表内容，再取出数据地址链，从而拿到具体数据</p><p><strong>索引的设计原则:基数较小的表,更新频繁字段,不能有效区分数据的列,等不适合创建索引,并且在已有索引的基础上尽量扩展索引,不要新建索引</strong></p><p><strong>mysql常见的索引</strong>:</p><p><strong>主键索引（PRIMARY）:数据列不允许重复，不允许为NULL，一个表只能有一个主键。</strong></p><p><strong>唯一索引（UNIQUE）:数据列不允许重复，允许为NULL值，一个表允许多个列创建唯一索引</strong></p><p>普通索引（INDEX）</p><p>全文索引（FULLTEXT）</p><h2 id="1-7SQL语句优化"><a href="#1-7SQL语句优化" class="headerlink" title="1.7SQL语句优化"></a>1.7SQL语句优化</h2><p>**1.避免使用select ***</p><p><strong>2.小表驱动大表</strong></p><ul><li><code>in</code> 适用于左边大表，右边小表。优先执行in里面的<code>子查询语句</code></li><li><code>exists</code> 适用于左边小表，右边大表。优先执行exists左边的语句（即主查询语句）</li></ul><p>不管是用in，还是exists关键字，其核心思想都是用小表驱动大表。</p><p><strong>3.尽量减少子查询，使用关联查询（left join,right join,inner join）替代</strong></p><p><strong>4、应尽量避免在 where 子句中使用!&#x3D;或&lt;&gt;操作符，否则将引擎放弃使用索引而进行全表扫描</strong></p><p><strong>5.使用表的别名</strong></p><p><strong>6.使用预编译查询</strong></p><p><strong>7.创建索引</strong>(重要)</p><p>要尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。</p><h2 id="1-8什么是视图"><a href="#1-8什么是视图" class="headerlink" title="1.8什么是视图?"></a>1.8什么是视图?</h2><p><strong>视图是一种虚拟的表，具有和物理表相同的功能。可以对视图进行增，改，查，操作</strong>，视图通常是有一</p><p>个表或者多个表的行或列的子集。<strong>对视图的修改不影响基本表。它使得我们获取数据更容易，相比多表</strong>**</p><p><strong>查询。</strong></p><h2 id="1-9什么是内联接、左外联接、右外联接？"><a href="#1-9什么是内联接、左外联接、右外联接？" class="headerlink" title="1.9什么是内联接、左外联接、右外联接？"></a>1.9<strong>什么是内联接、左外联接、右外联接？</strong></h2><p>内联接（Inner Join）：匹配2张表中相关联的记录。</p><p>左外联接（Left Outer Join）：除了匹配2张表中相关联的记录外，还会匹配左表中剩余的记录，</p><p>右表中未匹配到的字段用NULL表示。</p><p>右外联接（Right Outer Join）：除了匹配2张表中相关联的记录外，还会匹配右表中剩余的记录，</p><p>左表中未匹配到的字段用NULL表示。在判定左表和右表时，要根据表名出现在Outer Join的左右</p><p>位置关</p><h2 id="1-10并发事务带来哪些问题-了解"><a href="#1-10并发事务带来哪些问题-了解" class="headerlink" title="1.10并发事务带来哪些问题?(了解)"></a>1.10<strong>并发事务带来哪些问题</strong>?(了解)</h2><p><strong>脏读</strong>: 当一个事务正在访问数据并且对数据进行了修改，而这种修改还没有提交到</p><p>数据库中，这时另外一个事务也访问了这个数据，然后使用了这个数据。因为这个数据是还没有提</p><p>交的数据，那么另外一个事务读到的这个数据是“脏数据”，依据“脏数据”所做的操作可能是不正确</p><p>的。</p><p><strong>丢失修改</strong> 指在一个事务读取一个数据时，另外一个事务也访问了该数据，那</p><p>么在第一个事务中修改了这个数据后，第二个事务也修改了这个数据。这样第一个事务内的修改结</p><p>果就被丢失，因此称为丢失修改。 例如：事务1读取某表中的数据A&#x3D;20，事务2也读取A&#x3D;20，事</p><p>务1修改A&#x3D;A-1，事务2也修改A&#x3D;A-1，最终结果A&#x3D;19，事务1的修改被丢失。</p><p><strong>不可重复读:</strong> 指在一个事务内多次读同一数据。在这个事务还没有结束</p><p>时，另一个事务也访问该数据。那么，在第一个事务中的两次读数据之间，由于第二个事务的修改</p><p>导致第一个事务两次读取的数据可能不太一样。这就发生了在一个事务内两次读到的数据是不一样</p><p>的情况，因此称为不可重复读。</p><p><strong>幻读:</strong> 幻读与不可重复读类似。它发生在一个事务（T1）读取了几行数据，接</p><p>着另一个并发事务（T2）插入了一些数据时。在随后的查询中，第一个事务（T1）就会发现多了</p><p>一些原本不存在的记录，就好像发生了幻觉一样，所以称为幻读</p><h2 id="1-11事务隔离级别有哪些-MySQL的默认隔离级别"><a href="#1-11事务隔离级别有哪些-MySQL的默认隔离级别" class="headerlink" title="1.11事务隔离级别有哪些?MySQL的默认隔离级别"></a>1.11<strong>事务隔离级别有哪些</strong>?MySQL的默认隔离级别</h2><p><strong>SQL</strong> <strong>标准定义了四个隔离级别：</strong></p><p><strong>READ-UNCOMMITTED(读取未提交)：</strong> 最低的隔离级别，允许读取尚未提交的数据变更，<strong>可能会</strong></p><p><strong>导致脏读、幻读或不可重复读</strong>。</p><p><strong>READ-COMMITTED(读取已提交)：</strong> 允许读取并发事务已经提交的数据，<strong>可以阻止脏读，但是幻</strong></p><p><strong>读或不可重复读仍有可能发生</strong>。</p><p><strong>REPEATABLE-READ(可重复读)：</strong> 对同一字段的多次读取结果都是一致的，除非数据是被本身事务</p><p>自己所修改，<strong>可以阻止脏读和不可重复读，但幻读仍有可能发生</strong>。</p><p>**SERIALIZABLE(可串行化)**： 最高的隔离级别，完全服从ACID的隔离级别。所有的事务依次逐个执</p><p>行，这样事务之间就完全不可能产生干扰，也就是说，<strong>该级别可以防止脏读、不可重复读以及幻</strong></p><p><strong>读</strong>。</p><p><strong>MySQL InnoDB 存储引擎的默认支持的隔离级别是 REPEATABLE-READ（可重读）</strong></p><h2 id="1-12大表如何优化？"><a href="#1-12大表如何优化？" class="headerlink" title="1.12大表如何优化？"></a>1.12<strong>大表如何优化？</strong></h2><p>当MySQL单表记录数过大时，数据库的CRUD性能会明显下降，一些常见的优化措施如下：</p><p><strong>1.</strong> <strong>限定数据的范围</strong></p><p>务必禁止不带任何限制数据范围条件的查询语句。比如：我们当用户在查询订单历史的时候，我们可以</p><p>控制在一个月的范围内；</p><p><strong>2.</strong> <strong>读写分离</strong></p><p>经典的数据库拆分方案，主库负责写，从库负责读；</p><p><strong>3.</strong> <strong>垂直分区</strong></p><p><strong>简单来说垂直拆分是指数据表列的拆分，把一张列比较多的表拆分为多张表。</strong></p><p> <strong>4.水平分区</strong></p><p><strong>保持数据表结构不变，通过某种策略存储数据分片。</strong></p><h2 id="1-13分库分表之后-id-主键如何处理？"><a href="#1-13分库分表之后-id-主键如何处理？" class="headerlink" title="1.13分库分表之后,id 主键如何处理？"></a>1.13<strong>分库分表之后</strong>,id <strong>主键如何处理？</strong></h2><p>传统的自增主键可能会导致重复冲突。需要一个全局唯一的 id 来</p><p>支持。</p><p><strong>生成全局 id 有下面这几种方式：</strong></p><p><strong>UUID</strong>：不适合作为主键，因为太长了，并且无序不可读，查询效率低。比较适合用于生成唯一的</p><p>名字的标示比如文件的名字。</p><p><strong>数据库自增</strong> <strong>id</strong> : 两台数据库分别设置不同步长，生成不重复ID的策略来实现高可用。这种方式生成</p><p>的 id 有序，但是需要独立部署数据库实例，成本高，还会有性能瓶颈。</p><p><strong>利用</strong> <strong>redis</strong> <strong>生成</strong> <strong>id :</strong> 性能比较好，灵活方便，不依赖于数据库。但是，引入了新的组件造成系统更</p><p>加复杂，可用性降低，编码更加复杂，增加了系统成本。</p><p> <strong>Snowflake 算法</strong></p><h2 id="1-14varchar和char的区别"><a href="#1-14varchar和char的区别" class="headerlink" title="1.14varchar和char的区别"></a>1.14varchar和char的区别</h2><table><thead><tr><th>特性</th><th align="center">CHAR</th><th>VARCHAR</th></tr></thead><tbody><tr><td>存储方式</td><td align="center">固定长度</td><td>可变长度</td></tr><tr><td>空间使用</td><td align="center">总是占用指定的最大空间</td><td>根据实际内容调整空间</td></tr><tr><td>性能</td><td align="center">对于固定长度的数据，可能有更好的性能</td><td>较高的灵活性，但可能有轻微性能损失</td></tr><tr><td>适用场景</td><td align="center">数据长度固定的字段</td><td>数据长度不固定的字段</td></tr></tbody></table><h2 id="1-15DATETIME和TIMESTAMP的区别"><a href="#1-15DATETIME和TIMESTAMP的区别" class="headerlink" title="1.15DATETIME和TIMESTAMP的区别"></a>1.15DATETIME和TIMESTAMP的区别</h2><table><thead><tr><th>特性</th><th>DATETIME</th><th>TIMESTAMP</th></tr></thead><tbody><tr><td>存储方式</td><td>固定8字节，范围更大</td><td>4字节，范围受限</td></tr><tr><td>时区处理</td><td>不涉及时区</td><td>自动转换为UTC存储</td></tr><tr><td>自动初始化&#x2F;更新</td><td>默认不启用，可配置</td><td>默认自动初始化和更新，可配置</td></tr><tr><td>精度</td><td>可达秒，默认无小数秒</td><td>同样可达秒，默认无小数秒</td></tr><tr><td>适用场景</td><td>不需要时区转换，大范围日期</td><td>多时区应用，节省存储空间</td></tr></tbody></table><h2 id="1-16创建索引的三种方式"><a href="#1-16创建索引的三种方式" class="headerlink" title="1.16创建索引的三种方式"></a>1.16<strong>创建索引的三种方式</strong></h2><p>第一种方式：在执行CREATE TABLE时创建索引</p><p>第二种方式：使用ALTER TABLE命令去增加索引</p><p>第三种方式：使用CREATE INDEX命令创建</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 工作ing~ </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 日常 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>SpringBoot</title>
       <link href="/posts/33757.html"/>
       <url>/posts/33757.html</url>
@@ -180,6 +205,17 @@
     
     
     <entry>
+      <title>分类</title>
+      <link href="/categories/index.html"/>
+      <url>/categories/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title></title>
       <link href="/css/custom.css"/>
       <url>/css/custom.css</url>
@@ -202,44 +238,11 @@
     
     
     <entry>
-      <title>分类</title>
-      <link href="/categories/index.html"/>
-      <url>/categories/index.html</url>
+      <title>説説</title>
+      <link href="/shuoshuo/index.html"/>
+      <url>/shuoshuo/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title></title>
-      <link href="/js/fps.js"/>
-      <url>/js/fps.js</url>
-      
-        <content type="html"><![CDATA[if (window.localStorage.getItem("fpson") == undefined || window.localStorage.getItem("fpson") == "1") {    var rAF = function () {        return (            window.requestAnimationFrame ||            window.webkitRequestAnimationFrame ||            function (callback) {                window.setTimeout(callback, 1000 / 60);            }        );    }();    var frame = 0;    var allFrameCount = 0;    var lastTime = Date.now();    var lastFameTime = Date.now();    var loop = function () {        var now = Date.now();        var fs = (now - lastFameTime);        var fps = Math.round(1000 / fs);        lastFameTime = now;        // 不置 0，在动画的开头及结尾记录此值的差值算出 FPS        allFrameCount++;        frame++;        if (now > 1000 + lastTime) {            var fps = Math.round((frame * 1000) / (now - lastTime));            if (fps <= 5) {                var kd = `<span style="color:#bd0000">卡成ppt🤢</span>`            } else if (fps <= 15) {                var kd = `<span style="color:red">电竞级帧率😖</span>`            } else if (fps <= 25) {                var kd = `<span style="color:orange">有点难受😨</span>`            } else if (fps < 35) {                var kd = `<span style="color:#9338e6">不太流畅🙄</span>`            } else if (fps <= 45) {                var kd = `<span style="color:#08b7e4">还不错哦😁</span>`            } else {                var kd = `<span style="color:#39c5bb">十分流畅🤣</span>`            }            document.getElementById("fps").innerHTML = `FPS:${fps} ${kd}`;            frame = 0;            lastTime = now;        };        rAF(loop);    }    loop();} else {    document.getElementById("fps").style = "display:none!important"}]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>友情链接</title>
-      <link href="/link/index.html"/>
-      <url>/link/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title></title>
-      <link href="/js/title.js"/>
-      <url>/js/title.js</url>
-      
-        <content type="html"><![CDATA[//动态标题var OriginTitile = document.title;var titleTime;document.addEventListener('visibilitychange', function () {  if (document.hidden) {    //离开当前页面时标签显示内容    document.title = '👀跑哪里去捏~';    clearTimeout(titleTime);  } else {    //返回当前页面时标签显示内容    document.title = '🐖抓到你啦嘻嘻～';    //两秒后变回正常标题    titleTime = setTimeout(function () {      document.title = OriginTitile;    }, 2000);  }});]]></content>
       
     </entry>
     
@@ -257,9 +260,42 @@
     
     
     <entry>
-      <title>説説</title>
-      <link href="/shuoshuo/index.html"/>
-      <url>/shuoshuo/index.html</url>
+      <title></title>
+      <link href="/js/fps.js"/>
+      <url>/js/fps.js</url>
+      
+        <content type="html"><![CDATA[if (window.localStorage.getItem("fpson") == undefined || window.localStorage.getItem("fpson") == "1") {    var rAF = function () {        return (            window.requestAnimationFrame ||            window.webkitRequestAnimationFrame ||            function (callback) {                window.setTimeout(callback, 1000 / 60);            }        );    }();    var frame = 0;    var allFrameCount = 0;    var lastTime = Date.now();    var lastFameTime = Date.now();    var loop = function () {        var now = Date.now();        var fs = (now - lastFameTime);        var fps = Math.round(1000 / fs);        lastFameTime = now;        // 不置 0，在动画的开头及结尾记录此值的差值算出 FPS        allFrameCount++;        frame++;        if (now > 1000 + lastTime) {            var fps = Math.round((frame * 1000) / (now - lastTime));            if (fps <= 5) {                var kd = `<span style="color:#bd0000">卡成ppt🤢</span>`            } else if (fps <= 15) {                var kd = `<span style="color:red">电竞级帧率😖</span>`            } else if (fps <= 25) {                var kd = `<span style="color:orange">有点难受😨</span>`            } else if (fps < 35) {                var kd = `<span style="color:#9338e6">不太流畅🙄</span>`            } else if (fps <= 45) {                var kd = `<span style="color:#08b7e4">还不错哦😁</span>`            } else {                var kd = `<span style="color:#39c5bb">十分流畅🤣</span>`            }            document.getElementById("fps").innerHTML = `FPS:${fps} ${kd}`;            frame = 0;            lastTime = now;        };        rAF(loop);    }    loop();} else {    document.getElementById("fps").style = "display:none!important"}]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title></title>
+      <link href="/js/title.js"/>
+      <url>/js/title.js</url>
+      
+        <content type="html"><![CDATA[//动态标题var OriginTitile = document.title;var titleTime;document.addEventListener('visibilitychange', function () {  if (document.hidden) {    //离开当前页面时标签显示内容    document.title = '👀跑哪里去捏~';    clearTimeout(titleTime);  } else {    //返回当前页面时标签显示内容    document.title = '🐖抓到你啦嘻嘻～';    //两秒后变回正常标题    titleTime = setTimeout(function () {      document.title = OriginTitile;    }, 2000);  }});]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>友情链接</title>
+      <link href="/link/index.html"/>
+      <url>/link/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>文章分类</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -273,17 +309,6 @@
       <url>/js/universe.js</url>
       
         <content type="html"><![CDATA[function dark() {window.requestAnimationFrame=window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame;var n,e,i,h,t=.05,s=document.getElementById("universe"),o=!0,a="180,184,240",r="226,225,142",d="226,225,224",c=[];function f(){n=window.innerWidth,e=window.innerHeight,i=.216*n,s.setAttribute("width",n),s.setAttribute("height",e)}function u(){h.clearRect(0,0,n,e);for(var t=c.length,i=0;i<t;i++){var s=c[i];s.move(),s.fadeIn(),s.fadeOut(),s.draw()}}function y(){this.reset=function(){this.giant=m(3),this.comet=!this.giant&&!o&&m(10),this.x=l(0,n-10),this.y=l(0,e),this.r=l(1.1,2.6),this.dx=l(t,6*t)+(this.comet+1-1)*t*l(50,120)+2*t,this.dy=-l(t,6*t)-(this.comet+1-1)*t*l(50,120),this.fadingOut=null,this.fadingIn=!0,this.opacity=0,this.opacityTresh=l(.2,1-.4*(this.comet+1-1)),this.do=l(5e-4,.002)+.001*(this.comet+1-1)},this.fadeIn=function(){this.fadingIn&&(this.fadingIn=!(this.opacity>this.opacityTresh),this.opacity+=this.do)},this.fadeOut=function(){this.fadingOut&&(this.fadingOut=!(this.opacity<0),this.opacity-=this.do/2,(this.x>n||this.y<0)&&(this.fadingOut=!1,this.reset()))},this.draw=function(){if(h.beginPath(),this.giant)h.fillStyle="rgba("+a+","+this.opacity+")",h.arc(this.x,this.y,2,0,2*Math.PI,!1);else if(this.comet){h.fillStyle="rgba("+d+","+this.opacity+")",h.arc(this.x,this.y,1.5,0,2*Math.PI,!1);for(var t=0;t<30;t++)h.fillStyle="rgba("+d+","+(this.opacity-this.opacity/20*t)+")",h.rect(this.x-this.dx/4*t,this.y-this.dy/4*t-2,2,2),h.fill()}else h.fillStyle="rgba("+r+","+this.opacity+")",h.rect(this.x,this.y,this.r,this.r);h.closePath(),h.fill()},this.move=function(){this.x+=this.dx,this.y+=this.dy,!1===this.fadingOut&&this.reset(),(this.x>n-n/4||this.y<0)&&(this.fadingOut=!0)},setTimeout(function(){o=!1},50)}function m(t){return Math.floor(1e3*Math.random())+1<10*t}function l(t,i){return Math.random()*(i-t)+t}f(),window.addEventListener("resize",f,!1),function(){h=s.getContext("2d");for(var t=0;t<i;t++)c[t]=new y,c[t].reset();u()}(),function t(){document.getElementsByTagName('html')[0].getAttribute('data-theme')=='dark'&&u(),window.requestAnimationFrame(t)}()};dark()]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>文章分类</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
       
     </entry>
     

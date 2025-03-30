@@ -1,0 +1,491 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>MySql | 烈火燎原</title><meta name="author" content="一斩千机"><meta name="copyright" content="一斩千机"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1.MySql1.1数据库的三范式是什么第一范式（1NF）：原子性（存储的数据应该具有“不可再分性”） 第二范式（2NF）：唯一性 (消除非主键部分依赖联合主键中的部分字段) 第三范式（3NF）：独立性，消除传递依赖(非主键值不依赖于另一个非主键值) 且三大范式是一级一级依赖的，第二范式建立在第一范式上，第三范式建立第一第二范式上。 1.2MySql常用引擎：MYISAM、InnodbMYISAM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySql">
+<meta property="og:url" content="http://example.com/posts/16097.html">
+<meta property="og:site_name" content="烈火燎原">
+<meta property="og:description" content="1.MySql1.1数据库的三范式是什么第一范式（1NF）：原子性（存储的数据应该具有“不可再分性”） 第二范式（2NF）：唯一性 (消除非主键部分依赖联合主键中的部分字段) 第三范式（3NF）：独立性，消除传递依赖(非主键值不依赖于另一个非主键值) 且三大范式是一级一级依赖的，第二范式建立在第一范式上，第三范式建立第一第二范式上。 1.2MySql常用引擎：MYISAM、InnodbMYISAM">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.imgdb.cn/item/67e8e8680ba3d5a1d7e6b03c.jpg">
+<meta property="article:published_time" content="2025-03-30T06:44:21.313Z">
+<meta property="article:modified_time" content="2025-03-30T06:45:42.980Z">
+<meta property="article:author" content="一斩千机">
+<meta property="article:tag" content="日常">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.imgdb.cn/item/67e8e8680ba3d5a1d7e6b03c.jpg"><link rel="shortcut icon" href="https://pic.imgdb.cn/item/671304bbd29ded1a8cc0ac9f.jpg"><link rel="canonical" href="http://example.com/posts/16097.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        if (name && globalFn[key][name]) return
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 6 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MySql',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-30 14:45:42'
+}</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><span id="fps"></span><!-- hexo injector head_end start --><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-categories-card@1.0.0/lib/categorybar.css"><link rel="stylesheet" href="https://unpkg.zhimg.com/hexo-butterfly-footer-beautify@1.0.0/lib/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiperstyle.css" media="print" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg" style="background-image: url(https://pic.imgdb.cn/item/67120088d29ded1a8c629563.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/67120095d29ded1a8c62a505.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw fas fa-comment"></i><span> 说说</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我们</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://pic1.imgdb.cn/item/67e8e8680ba3d5a1d7e6b03c.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">烈火燎原</span></a><a class="nav-page-title" href="/"><span class="site-name">MySql</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/shuoshuo/"><i class="fa-fw fas fa-comment"></i><span> 说说</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我们</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">MySql</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-03-30T06:44:21.313Z" title="发表于 2025-03-30 14:44:21">2025-03-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-03-30T06:45:42.980Z" title="更新于 2025-03-30 14:45:42">2025-03-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B7%A5%E4%BD%9Cing/">工作ing~</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="1-MySql"><a href="#1-MySql" class="headerlink" title="1.MySql"></a>1.MySql</h1><h2 id="1-1数据库的三范式是什么"><a href="#1-1数据库的三范式是什么" class="headerlink" title="1.1数据库的三范式是什么"></a>1.1<strong>数据库的三范式是什么</strong></h2><p>第一范式（1NF）：原子性（存储的数据应该具有“不可再分性”）</p>
+<p>第二范式（2NF）：唯一性 (消除非主键部分依赖联合主键中的部分字段)</p>
+<p>第三范式（3NF）：独立性，消除传递依赖(非主键值不依赖于另一个非主键值)</p>
+<p>且三大范式是一级一级依赖的，第二范式建立在第一范式上，第三范式建立第一第二范式上。</p>
+<h2 id="1-2MySql常用引擎：MYISAM、Innodb"><a href="#1-2MySql常用引擎：MYISAM、Innodb" class="headerlink" title="1.2MySql常用引擎：MYISAM、Innodb"></a>1.2MySql常用引擎：MYISAM、Innodb</h2><p>MYISAM：全表锁，拥有较高的执行速度，不支持事务，不支持外键，并发性能差，占用空间相对</p>
+<p>较小，对事务完整性没有要求，以select、insert为主的应用基本上可以使用这引擎</p>
+<p>Innodb:行级锁，提供了具有提交、回滚和崩溃回复能力的事务安全，支持自动增长列，支持外键</p>
+<p>约束，并发能力强，占用空间是MYISAM的2.5倍，处理效率相对会差一些</p>
+<h2 id="1-3InnoDB与MyISAM的区别"><a href="#1-3InnoDB与MyISAM的区别" class="headerlink" title="1.3InnoDB与MyISAM的区别"></a>1.3InnoDB与MyISAM的区别</h2><ol>
+<li>InnoDB支持事务，MyISAM不支持，对于InnoDB每一条SQL语言都默认封装成事务，自动提交，</li>
+</ol>
+<p>这样会影响速度，所以最好把多条SQL语言放在begin和commit之间，组成一个事务；</p>
+<ol start="2">
+<li>InnoDB支持外键，而MyISAM不支持。对一个包含外键的InnoDB表转为MYISAM会失败；</li>
+<li>InnoDB是聚集索引，数据文件是和索引绑在一起的，必须要有主键，通过主键索引效率很高。但</li>
+</ol>
+<p>是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，</p>
+<p>因为主键太大，其他索引也都会很大。而MyISAM是非聚集索引，数据文件是分离的，索引保存的</p>
+<p>是数据文件的指针。主键索引和辅助索引是独立的。</p>
+<ol start="4">
+<li>InnoDB不保存表的具体行数，执行select count(*) from table时需要全表扫描。而MyISAM用一</li>
+</ol>
+<p>个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快；</p>
+<ol start="5">
+<li>Innodb不支持全文索引，而MyISAM支持全文索引，查询效率上MyISAM要高；</li>
+</ol>
+<h2 id="1-4如何选择引擎？"><a href="#1-4如何选择引擎？" class="headerlink" title="1.4如何选择引擎？"></a>1.4<strong>如何选择引擎？</strong></h2><p>如果没有特别的需求，使用默认的 Innodb 即可。</p>
+<p>MyISAM：以读写插入为主的应用程序，比如博客系统、新闻门户网站。</p>
+<p>Innodb：更新（删除）操作频率也高，或者要保证数据的完整性；并发量高，支持事务和外键。</p>
+<h2 id="1-5数据库的事务"><a href="#1-5数据库的事务" class="headerlink" title="1.5数据库的事务"></a>1.5<strong>数据库的事务</strong></h2><p><strong>什么是事务？：</strong> 多条sql语句，要么全部成功，要么全部失败</p>
+<p><em>数据库事务特性：原子性(Atomic)、一致性</em>(Consistency)、隔离性(Isolation)、持久性(Durabiliy),</p>
+<p>简称ACID</p>
+<p>原子性: 指的是一个事务中的操作要么全部成功，要么全部失败。</p>
+<p>一致性: 指的是数据库总是从一个一致性的状态转换到另外一个一致性的状态。即数据不会被破坏。如A</p>
+<p>转账100元给B，不管操作是否成功，A和B的账户总额是不变的。</p>
+<p>隔离性:在并发数据操作时，不同的事务拥有各自的数据空间，它们的操作不会对彼此产生干扰</p>
+<p>持久性: 指的是一旦事务提交，所做的修改就会永久保存到数据库中，</p>
+<h2 id="1-6索引"><a href="#1-6索引" class="headerlink" title="1.6索引"></a>1.6索引</h2><p>索引用来快速地寻找那些具有特定值的记录。如果没有索引，一般来说执行查询时遍历整张表。</p>
+<p><strong>索引的原理:就是把无序的数据变成有序的查询,以空间换时间(通过创建额外的数据结构来使得对数据的访问更加快速和高效)</strong><br>1.把创建了索引的列的内容进行排序<br>2.对排序结果生成倒排表<br>3.在倒排表内容上拼上数据地址链<br>4.在查询的时候，先拿到倒排表内容，再取出数据地址链，从而拿到具体数据</p>
+<p><strong>索引的设计原则:基数较小的表,更新频繁字段,不能有效区分数据的列,等不适合创建索引,并且在已有索引的基础上尽量扩展索引,不要新建索引</strong></p>
+<p><strong>mysql常见的索引</strong>:</p>
+<p><strong>主键索引（PRIMARY）:数据列不允许重复，不允许为NULL，一个表只能有一个主键。</strong></p>
+<p><strong>唯一索引（UNIQUE）:数据列不允许重复，允许为NULL值，一个表允许多个列创建唯一索引</strong></p>
+<p>普通索引（INDEX）</p>
+<p>全文索引（FULLTEXT）</p>
+<h2 id="1-7SQL语句优化"><a href="#1-7SQL语句优化" class="headerlink" title="1.7SQL语句优化"></a>1.7SQL语句优化</h2><p>**1.避免使用select ***</p>
+<p><strong>2.小表驱动大表</strong></p>
+<ul>
+<li><code>in</code> 适用于左边大表，右边小表。优先执行in里面的<code>子查询语句</code></li>
+<li><code>exists</code> 适用于左边小表，右边大表。优先执行exists左边的语句（即主查询语句）</li>
+</ul>
+<p>不管是用in，还是exists关键字，其核心思想都是用小表驱动大表。</p>
+<p><strong>3.尽量减少子查询，使用关联查询（left join,right join,inner join）替代</strong></p>
+<p><strong>4、应尽量避免在 where 子句中使用!&#x3D;或&lt;&gt;操作符，否则将引擎放弃使用索引而进行全表扫描</strong></p>
+<p><strong>5.使用表的别名</strong></p>
+<p><strong>6.使用预编译查询</strong></p>
+<p><strong>7.创建索引</strong>(重要)</p>
+<p>要尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。</p>
+<h2 id="1-8什么是视图"><a href="#1-8什么是视图" class="headerlink" title="1.8什么是视图?"></a>1.8什么是视图?</h2><p><strong>视图是一种虚拟的表，具有和物理表相同的功能。可以对视图进行增，改，查，操作</strong>，视图通常是有一</p>
+<p>个表或者多个表的行或列的子集。<strong>对视图的修改不影响基本表。它使得我们获取数据更容易，相比多表</strong>**</p>
+<p><strong>查询。</strong></p>
+<h2 id="1-9什么是内联接、左外联接、右外联接？"><a href="#1-9什么是内联接、左外联接、右外联接？" class="headerlink" title="1.9什么是内联接、左外联接、右外联接？"></a>1.9<strong>什么是内联接、左外联接、右外联接？</strong></h2><p>内联接（Inner Join）：匹配2张表中相关联的记录。</p>
+<p>左外联接（Left Outer Join）：除了匹配2张表中相关联的记录外，还会匹配左表中剩余的记录，</p>
+<p>右表中未匹配到的字段用NULL表示。</p>
+<p>右外联接（Right Outer Join）：除了匹配2张表中相关联的记录外，还会匹配右表中剩余的记录，</p>
+<p>左表中未匹配到的字段用NULL表示。在判定左表和右表时，要根据表名出现在Outer Join的左右</p>
+<p>位置关</p>
+<h2 id="1-10并发事务带来哪些问题-了解"><a href="#1-10并发事务带来哪些问题-了解" class="headerlink" title="1.10并发事务带来哪些问题?(了解)"></a>1.10<strong>并发事务带来哪些问题</strong>?(了解)</h2><p><strong>脏读</strong>: 当一个事务正在访问数据并且对数据进行了修改，而这种修改还没有提交到</p>
+<p>数据库中，这时另外一个事务也访问了这个数据，然后使用了这个数据。因为这个数据是还没有提</p>
+<p>交的数据，那么另外一个事务读到的这个数据是“脏数据”，依据“脏数据”所做的操作可能是不正确</p>
+<p>的。</p>
+<p><strong>丢失修改</strong> 指在一个事务读取一个数据时，另外一个事务也访问了该数据，那</p>
+<p>么在第一个事务中修改了这个数据后，第二个事务也修改了这个数据。这样第一个事务内的修改结</p>
+<p>果就被丢失，因此称为丢失修改。 例如：事务1读取某表中的数据A&#x3D;20，事务2也读取A&#x3D;20，事</p>
+<p>务1修改A&#x3D;A-1，事务2也修改A&#x3D;A-1，最终结果A&#x3D;19，事务1的修改被丢失。</p>
+<p><strong>不可重复读:</strong> 指在一个事务内多次读同一数据。在这个事务还没有结束</p>
+<p>时，另一个事务也访问该数据。那么，在第一个事务中的两次读数据之间，由于第二个事务的修改</p>
+<p>导致第一个事务两次读取的数据可能不太一样。这就发生了在一个事务内两次读到的数据是不一样</p>
+<p>的情况，因此称为不可重复读。</p>
+<p><strong>幻读:</strong> 幻读与不可重复读类似。它发生在一个事务（T1）读取了几行数据，接</p>
+<p>着另一个并发事务（T2）插入了一些数据时。在随后的查询中，第一个事务（T1）就会发现多了</p>
+<p>一些原本不存在的记录，就好像发生了幻觉一样，所以称为幻读</p>
+<h2 id="1-11事务隔离级别有哪些-MySQL的默认隔离级别"><a href="#1-11事务隔离级别有哪些-MySQL的默认隔离级别" class="headerlink" title="1.11事务隔离级别有哪些?MySQL的默认隔离级别"></a>1.11<strong>事务隔离级别有哪些</strong>?MySQL的默认隔离级别</h2><p><strong>SQL</strong> <strong>标准定义了四个隔离级别：</strong></p>
+<p><strong>READ-UNCOMMITTED(读取未提交)：</strong> 最低的隔离级别，允许读取尚未提交的数据变更，<strong>可能会</strong></p>
+<p><strong>导致脏读、幻读或不可重复读</strong>。</p>
+<p><strong>READ-COMMITTED(读取已提交)：</strong> 允许读取并发事务已经提交的数据，<strong>可以阻止脏读，但是幻</strong></p>
+<p><strong>读或不可重复读仍有可能发生</strong>。</p>
+<p><strong>REPEATABLE-READ(可重复读)：</strong> 对同一字段的多次读取结果都是一致的，除非数据是被本身事务</p>
+<p>自己所修改，<strong>可以阻止脏读和不可重复读，但幻读仍有可能发生</strong>。</p>
+<p>**SERIALIZABLE(可串行化)**： 最高的隔离级别，完全服从ACID的隔离级别。所有的事务依次逐个执</p>
+<p>行，这样事务之间就完全不可能产生干扰，也就是说，<strong>该级别可以防止脏读、不可重复读以及幻</strong></p>
+<p><strong>读</strong>。</p>
+<p><strong>MySQL InnoDB 存储引擎的默认支持的隔离级别是 REPEATABLE-READ（可重读）</strong></p>
+<h2 id="1-12大表如何优化？"><a href="#1-12大表如何优化？" class="headerlink" title="1.12大表如何优化？"></a>1.12<strong>大表如何优化？</strong></h2><p>当MySQL单表记录数过大时，数据库的CRUD性能会明显下降，一些常见的优化措施如下：</p>
+<p><strong>1.</strong> <strong>限定数据的范围</strong></p>
+<p>务必禁止不带任何限制数据范围条件的查询语句。比如：我们当用户在查询订单历史的时候，我们可以</p>
+<p>控制在一个月的范围内；</p>
+<p><strong>2.</strong> <strong>读写分离</strong></p>
+<p>经典的数据库拆分方案，主库负责写，从库负责读；</p>
+<p><strong>3.</strong> <strong>垂直分区</strong></p>
+<p><strong>简单来说垂直拆分是指数据表列的拆分，把一张列比较多的表拆分为多张表。</strong></p>
+<p> <strong>4.水平分区</strong></p>
+<p><strong>保持数据表结构不变，通过某种策略存储数据分片。</strong></p>
+<h2 id="1-13分库分表之后-id-主键如何处理？"><a href="#1-13分库分表之后-id-主键如何处理？" class="headerlink" title="1.13分库分表之后,id 主键如何处理？"></a>1.13<strong>分库分表之后</strong>,id <strong>主键如何处理？</strong></h2><p>传统的自增主键可能会导致重复冲突。需要一个全局唯一的 id 来</p>
+<p>支持。</p>
+<p><strong>生成全局 id 有下面这几种方式：</strong></p>
+<p><strong>UUID</strong>：不适合作为主键，因为太长了，并且无序不可读，查询效率低。比较适合用于生成唯一的</p>
+<p>名字的标示比如文件的名字。</p>
+<p><strong>数据库自增</strong> <strong>id</strong> : 两台数据库分别设置不同步长，生成不重复ID的策略来实现高可用。这种方式生成</p>
+<p>的 id 有序，但是需要独立部署数据库实例，成本高，还会有性能瓶颈。</p>
+<p><strong>利用</strong> <strong>redis</strong> <strong>生成</strong> <strong>id :</strong> 性能比较好，灵活方便，不依赖于数据库。但是，引入了新的组件造成系统更</p>
+<p>加复杂，可用性降低，编码更加复杂，增加了系统成本。</p>
+<p> <strong>Snowflake 算法</strong></p>
+<h2 id="1-14varchar和char的区别"><a href="#1-14varchar和char的区别" class="headerlink" title="1.14varchar和char的区别"></a>1.14varchar和char的区别</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th align="center">CHAR</th>
+<th>VARCHAR</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存储方式</td>
+<td align="center">固定长度</td>
+<td>可变长度</td>
+</tr>
+<tr>
+<td>空间使用</td>
+<td align="center">总是占用指定的最大空间</td>
+<td>根据实际内容调整空间</td>
+</tr>
+<tr>
+<td>性能</td>
+<td align="center">对于固定长度的数据，可能有更好的性能</td>
+<td>较高的灵活性，但可能有轻微性能损失</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td align="center">数据长度固定的字段</td>
+<td>数据长度不固定的字段</td>
+</tr>
+</tbody></table>
+<h2 id="1-15DATETIME和TIMESTAMP的区别"><a href="#1-15DATETIME和TIMESTAMP的区别" class="headerlink" title="1.15DATETIME和TIMESTAMP的区别"></a>1.15DATETIME和TIMESTAMP的区别</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>DATETIME</th>
+<th>TIMESTAMP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存储方式</td>
+<td>固定8字节，范围更大</td>
+<td>4字节，范围受限</td>
+</tr>
+<tr>
+<td>时区处理</td>
+<td>不涉及时区</td>
+<td>自动转换为UTC存储</td>
+</tr>
+<tr>
+<td>自动初始化&#x2F;更新</td>
+<td>默认不启用，可配置</td>
+<td>默认自动初始化和更新，可配置</td>
+</tr>
+<tr>
+<td>精度</td>
+<td>可达秒，默认无小数秒</td>
+<td>同样可达秒，默认无小数秒</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>不需要时区转换，大范围日期</td>
+<td>多时区应用，节省存储空间</td>
+</tr>
+</tbody></table>
+<h2 id="1-16创建索引的三种方式"><a href="#1-16创建索引的三种方式" class="headerlink" title="1.16创建索引的三种方式"></a>1.16<strong>创建索引的三种方式</strong></h2><p>第一种方式：在执行CREATE TABLE时创建索引</p>
+<p>第二种方式：使用ALTER TABLE命令去增加索引</p>
+<p>第三种方式：使用CREATE INDEX命令创建</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">一斩千机</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/posts/16097.html">http://example.com/posts/16097.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">烈火燎原</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%97%A5%E5%B8%B8/">日常</a></div><div class="post-share"><div class="social-share" data-image="https://pic1.imgdb.cn/item/67e8e8680ba3d5a1d7e6b03c.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="next-post pull-full" href="/posts/33757.html" title="SpringBoot"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/67e7c2100ba3d5a1d7e65c19.png" onerror="onerror=null;src='https://pic.imgdb.cn/item/67120084d29ded1a8c62907d.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">SpringBoot</div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a href="/posts/10672.html" title="es初级入门"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/673d8ddcd29ded1a8cb4cbed.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-11-20</div><div class="title">es初级入门</div></div></a><a href="/posts/33757.html" title="SpringBoot"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/67e7c2100ba3d5a1d7e65c19.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-29</div><div class="title">SpringBoot</div></div></a><a href="/posts/38943.html" title="Java基础"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/67120036d29ded1a8c623314.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-11-06</div><div class="title">Java基础</div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC82MDE5MS8zNjY1OQ=="></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/67120095d29ded1a8c62a505.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">一斩千机</div><div class="author-info-description">这是我的个人博客</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://space.bilibili.com/11024354"><i class="fab fa-github"></i><span>关注我</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">这是我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-MySql"><span class="toc-number">1.</span> <span class="toc-text">1.MySql</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%89%E8%8C%83%E5%BC%8F%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.1.</span> <span class="toc-text">1.1数据库的三范式是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2MySql%E5%B8%B8%E7%94%A8%E5%BC%95%E6%93%8E%EF%BC%9AMYISAM%E3%80%81Innodb"><span class="toc-number">1.2.</span> <span class="toc-text">1.2MySql常用引擎：MYISAM、Innodb</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3InnoDB%E4%B8%8EMyISAM%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.3.</span> <span class="toc-text">1.3InnoDB与MyISAM的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E5%BC%95%E6%93%8E%EF%BC%9F"><span class="toc-number">1.4.</span> <span class="toc-text">1.4如何选择引擎？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.5.</span> <span class="toc-text">1.5数据库的事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-6%E7%B4%A2%E5%BC%95"><span class="toc-number">1.6.</span> <span class="toc-text">1.6索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-7SQL%E8%AF%AD%E5%8F%A5%E4%BC%98%E5%8C%96"><span class="toc-number">1.7.</span> <span class="toc-text">1.7SQL语句优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-8%E4%BB%80%E4%B9%88%E6%98%AF%E8%A7%86%E5%9B%BE"><span class="toc-number">1.8.</span> <span class="toc-text">1.8什么是视图?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-9%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E8%81%94%E6%8E%A5%E3%80%81%E5%B7%A6%E5%A4%96%E8%81%94%E6%8E%A5%E3%80%81%E5%8F%B3%E5%A4%96%E8%81%94%E6%8E%A5%EF%BC%9F"><span class="toc-number">1.9.</span> <span class="toc-text">1.9什么是内联接、左外联接、右外联接？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-10%E5%B9%B6%E5%8F%91%E4%BA%8B%E5%8A%A1%E5%B8%A6%E6%9D%A5%E5%93%AA%E4%BA%9B%E9%97%AE%E9%A2%98-%E4%BA%86%E8%A7%A3"><span class="toc-number">1.10.</span> <span class="toc-text">1.10并发事务带来哪些问题?(了解)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-11%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E6%9C%89%E5%93%AA%E4%BA%9B-MySQL%E7%9A%84%E9%BB%98%E8%AE%A4%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">1.11.</span> <span class="toc-text">1.11事务隔离级别有哪些?MySQL的默认隔离级别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-12%E5%A4%A7%E8%A1%A8%E5%A6%82%E4%BD%95%E4%BC%98%E5%8C%96%EF%BC%9F"><span class="toc-number">1.12.</span> <span class="toc-text">1.12大表如何优化？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-13%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E4%B9%8B%E5%90%8E-id-%E4%B8%BB%E9%94%AE%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%EF%BC%9F"><span class="toc-number">1.13.</span> <span class="toc-text">1.13分库分表之后,id 主键如何处理？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-14varchar%E5%92%8Cchar%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.14.</span> <span class="toc-text">1.14varchar和char的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-15DATETIME%E5%92%8CTIMESTAMP%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.15.</span> <span class="toc-text">1.15DATETIME和TIMESTAMP的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-16%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="toc-number">1.16.</span> <span class="toc-text">1.16创建索引的三种方式</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/16097.html" title="MySql"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/67e8e8680ba3d5a1d7e6b03c.jpg" onerror="this.onerror=null;this.src='https://pic.imgdb.cn/item/67120084d29ded1a8c62907d.jpg'" alt="MySql"/></a><div class="content"><a class="title" href="/posts/16097.html" title="MySql">MySql</a><time datetime="2025-03-30T06:44:21.313Z" title="发表于 2025-03-30 14:44:21">2025-03-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/33757.html" title="SpringBoot"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic1.imgdb.cn/item/67e7c2100ba3d5a1d7e65c19.png" onerror="this.onerror=null;this.src='https://pic.imgdb.cn/item/67120084d29ded1a8c62907d.jpg'" alt="SpringBoot"/></a><div class="content"><a class="title" href="/posts/33757.html" title="SpringBoot">SpringBoot</a><time datetime="2025-03-29T09:42:11.920Z" title="发表于 2025-03-29 17:42:11">2025-03-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/10672.html" title="es初级入门"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/673d8ddcd29ded1a8cb4cbed.png" onerror="this.onerror=null;this.src='https://pic.imgdb.cn/item/67120084d29ded1a8c62907d.jpg'" alt="es初级入门"/></a><div class="content"><a class="title" href="/posts/10672.html" title="es初级入门">es初级入门</a><time datetime="2024-11-20T07:16:17.213Z" title="发表于 2024-11-20 15:16:17">2024-11-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/38943.html" title="Java基础"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/67120036d29ded1a8c623314.jpg" onerror="this.onerror=null;this.src='https://pic.imgdb.cn/item/67120084d29ded1a8c62907d.jpg'" alt="Java基础"/></a><div class="content"><a class="title" href="/posts/38943.html" title="Java基础">Java基础</a><time datetime="2024-11-06T09:30:14.172Z" title="发表于 2024-11-06 17:30:14">2024-11-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/45351.html" title="暗藏玄机"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/67120082d29ded1a8c628d1a.jpg" onerror="this.onerror=null;this.src='https://pic.imgdb.cn/item/67120084d29ded1a8c62907d.jpg'" alt="暗藏玄机"/></a><div class="content"><a class="title" href="/posts/45351.html" title="暗藏玄机">暗藏玄机</a><time datetime="2024-10-19T02:02:14.904Z" title="发表于 2024-10-19 10:02:14">2024-10-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By 一斩千机</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button><button id="go-down" type="button" title="直达底部" onclick="btf.scrollToDest(document.body.scrollHeight, 500)"><i class="fas fa-arrow-down"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>(()=>{
+  const loadLivere = () => {
+    if (typeof LivereTower === 'object') window.LivereTower.init()
+    else {
+      (function(d, s) {
+          var j, e = d.getElementsByTagName(s)[0];
+          if (typeof LivereTower === 'function') { return; }
+          j = d.createElement(s);
+          j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+          j.async = true;
+          e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    }
+  }
+
+  if ('Livere' === 'Livere' || !false) {
+    if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+    else loadLivere()
+  } else {
+    window.loadOtherComment = loadLivere
+  }
+})()</script></div><div class="aplayer no-destroy" data-id="12737657313" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true"> </div><canvas id="universe"></canvas><script defer src="/js/universe.js"></script><script async src="/js/console.js"></script><script async src="/js/fps.js"></script><script async src="/js/title.js"></script><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      pjax.loadUrl('/404.html')
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><!-- hexo injector body_end start --><script data-pjax>
+    function butterfly_categories_card_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<style>li.categoryBar-list-item{width:32.3%;}.categoryBar-list{max-height: 190px;overflow:auto;}.categoryBar-list::-webkit-scrollbar{width:0!important}@media screen and (max-width: 650px){.categoryBar-list{max-height: 160px;}}</style><div class="recent-post-item" style="height:auto;width:100%;padding:0px;"><div id="categoryBar"><ul class="categoryBar-list"><li class="categoryBar-list-item" style="background:url(https://pic.imgdb.cn/item/6712009ad29ded1a8c62aafc.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/工作ing/&quot;);" href="javascript:void(0);">工作ing~</a><span class="categoryBar-list-count">5</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(https://pic.imgdb.cn/item/671220f9d29ded1a8c931fc1.png);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/无脑发癫/&quot;);" href="javascript:void(0);">无脑发癫</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(https://pic.imgdb.cn/item/67122107d29ded1a8c932df0.jpg);"> <a class="categoryBar-list-link" onclick="pjax.loadUrl(&quot;categories/逆水寒手游/&quot;);" href="javascript:void(0);">逆水寒手游</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr"></span></li></ul></div></div>';
+      console.log('已挂载butterfly_categories_card')
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      }
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+    butterfly_categories_card_injector_config()
+    }
+  </script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1s');
+    arr[i].setAttribute('data-wow-delay', '0s');
+    arr[i].setAttribute('data-wow-offset', '100');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://npm.elemecdn.com/hexo-butterfly-wowjs/lib/wow_init.js"></script><script data-pjax>
+  function butterfly_swiper_injector_config(){
+    var parent_div_git = document.getElementById('recent-posts');
+    var item_html = '<div class="recent-post-item" style="height: auto;width: 100%"><div class="blog-slider swiper-container-fade swiper-container-horizontal" id="swiper_container"><div class="blog-slider__wrp swiper-wrapper" style="transition-duration: 0ms;"><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;posts/2281.html&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/67120082d29ded1a8c628d1a.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2024-10-16</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;posts/2281.html&quot;);" href="javascript:void(0);" alt="">逆水寒日常</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;posts/2281.html&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;posts/16107.html&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/67120036d29ded1a8c623314.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2024-10-15</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;posts/16107.html&quot;);" href="javascript:void(0);" alt="">Hello World</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;posts/16107.html&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;posts/37560.html&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://pic.imgdb.cn/item/67122401d29ded1a8c97101d.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2024-10-18</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;posts/37560.html&quot;);" href="javascript:void(0);" alt="">如何解决精神上的内耗,完成自我的救赎</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;posts/37560.html&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div></div><div class="blog-slider__pagination swiper-pagination-clickable swiper-pagination-bullets"></div></div></div>';
+    console.log('已挂载butterfly_swiper')
+    parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  var elist = 'undefined'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_swiper_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_swiper_injector_config();
+  }
+  </script><script defer src="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper.min.js"></script><script defer data-pjax src="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper_init.js"></script><!-- hexo injector body_end end --></body></html>
